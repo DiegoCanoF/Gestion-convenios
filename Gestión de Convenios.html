@@ -1,0 +1,343 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Gestión de Convenios</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: aplicación de escritorio con barra lateral fija a la izquierda y área de trabajo a la derecha; en pantallas angostas la barra pasa arriba */
+:root{
+  --bg:#EEF1EF; --surface:#FFFFFF; --ink:#16211F; --muted:#586561; --line:#D9DFDC;
+  --side:#14211F; --side-ink:#C9D6D2; --side-act:#1F3A34;
+  --accent:#0B6E5B; --accent-ink:#FFFFFF; --accent-soft:#E1F1EC;
+  --ok:#1D7544; --ok-soft:#E0F2E7; --warn:#9A5B00; --warn-soft:#FBEBCF; --bad:#A8271E; --bad-soft:#F8DEDA;
+  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
+  --f-body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
+  --f-mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0E1413; --surface:#162120; --ink:#E5ECE9; --muted:#97A5A0; --line:#293734;
+  --side:#0A0F0E; --side-ink:#A9B9B4; --side-act:#18302A;
+  --accent:#43C9AA; --accent-ink:#06211B; --accent-soft:#17352E;
+  --ok:#5FD08C; --ok-soft:#173526; --warn:#F0B35A; --warn-soft:#3A2B10; --bad:#F2928A; --bad-soft:#3E1B18; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0E1413; --surface:#162120; --ink:#E5ECE9; --muted:#97A5A0; --line:#293734;
+  --side:#0A0F0E; --side-ink:#A9B9B4; --side-act:#18302A;
+  --accent:#43C9AA; --accent-ink:#06211B; --accent-soft:#17352E;
+  --ok:#5FD08C; --ok-soft:#173526; --warn:#F0B35A; --warn-soft:#3A2B10; --bad:#F2928A; --bad-soft:#3E1B18; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:400 14px/1.5 var(--f-body)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.banner{background:var(--warn-soft);color:var(--warn);font-size:12px;padding:6px 16px;text-align:center}
+.app{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:calc(100vh - 28px)}
+nav.side{background:var(--side);color:var(--side-ink);padding:20px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;align-self:start;height:calc(100vh - 28px);overflow:auto}
+.brand{font:700 18px/1.1 var(--f-display);color:#fff;padding:4px 10px 18px}
+.brand small{display:block;font:500 11px var(--f-mono);color:var(--side-ink);letter-spacing:.06em;margin-top:6px;text-transform:uppercase}
+nav.side a{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--side-ink);text-decoration:none;padding:9px 10px;border-radius:6px;font-weight:500}
+nav.side a:hover{background:var(--side-act);color:#fff}
+nav.side a[aria-current="page"]{background:var(--side-act);color:#fff;box-shadow:inset 3px 0 0 var(--accent)}
+nav.side .badge{font:500 11px var(--f-mono);background:var(--bad);color:#fff;border-radius:99px;padding:1px 8px}
+.side .foot{margin-top:auto;font-size:12px;padding:10px;color:var(--side-ink);opacity:.8}
+main{padding:24px clamp(16px,3vw,36px) 56px;min-width:0}
+.pagehead{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+h1{font:700 28px/1.1 var(--f-display);margin:0;letter-spacing:-.015em}
+.pagehead p{margin:4px 0 0;color:var(--muted)}
+h2{font:700 17px var(--f-display);margin:0 0 12px}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px}
+.grid{display:grid;gap:16px}
+.tiles{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;display:grid;gap:2px;text-decoration:none;color:inherit}
+a.tile:hover{border-color:var(--accent)}
+.tile b{font:700 32px/1.1 var(--f-display);font-variant-numeric:tabular-nums}
+.tile span{color:var(--muted);font-size:13px}
+.tile.bad b{color:var(--bad)}.tile.warn b{color:var(--warn)}
+.two{grid-template-columns:minmax(0,3fr) minmax(0,2fr)}
+@media (max-width:980px){.two{grid-template-columns:1fr}}
+.bars{display:grid;gap:14px}
+.bar-row{display:grid;grid-template-columns:110px minmax(0,1fr) 40px;gap:12px;align-items:center;font-size:13px}
+.bar{display:flex;height:18px;border-radius:4px;overflow:hidden;background:var(--bg)}
+.bar i{display:block;height:100%}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:14px}
+.legend span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:var(--c)}
+.c-ok{background:var(--ok)}.c-warn{background:var(--warn)}.c-bad{background:var(--bad)}
+.items{display:grid;gap:0}
+.item{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-top:1px solid var(--line);cursor:pointer;align-items:center}
+.item:first-child{border-top:0}.item:hover .t{color:var(--accent)}
+.item .t{font-weight:600}.sub{color:var(--muted);font-size:12px}
+.folio{font:500 12px var(--f-mono)}
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 12px var(--f-body);padding:2px 9px;border-radius:99px;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.p-ok{background:var(--ok-soft);color:var(--ok)}.p-warn{background:var(--warn-soft);color:var(--warn)}.p-bad{background:var(--bad-soft);color:var(--bad)}.p-mute{background:var(--bg);color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font:600 13px var(--f-body);text-decoration:none;border-radius:6px;padding:8px 14px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn.danger{background:transparent;color:var(--bad);border-color:var(--bad)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn:disabled{opacity:.45;cursor:default}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+input,select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 10px;min-width:0}
+.filters input[type=search]{flex:1 1 240px}
+textarea{width:100%;font:12px/1.5 var(--f-mono);resize:vertical}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--surface)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{font:500 11px var(--f-mono);text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:10px 12px;background:var(--bg);white-space:nowrap}
+td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top}
+tbody tr.click{cursor:pointer}tbody tr.click:hover{background:var(--accent-soft)}
+td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.pager{display:flex;justify-content:space-between;align-items:center;padding-top:12px;color:var(--muted);flex-wrap:wrap;gap:8px}
+.pager div{display:flex;gap:8px}
+form.f{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 16px}
+@media (max-width:760px){form.f{grid-template-columns:1fr}}
+.field{display:grid;gap:4px}.field.full{grid-column:1/-1}
+.field label{font-weight:600;font-size:12px}
+.field .err{color:var(--bad);font-size:12px;min-height:0}
+.field input.bad,.field select.bad{border-color:var(--bad)}
+.hint{color:var(--muted);font-size:12px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.pdfbox{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;border:1px dashed var(--line);border-radius:8px;padding:12px 14px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:8px;font-weight:500;z-index:50;max-width:calc(100% - 32px)}
+.progress{height:8px;background:var(--bg);border-radius:99px;overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s}
+.stack{display:grid;gap:16px}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:10px}
+.crumb a{color:var(--accent);text-decoration:none;cursor:pointer}
+dl.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0}dl.kv dt{color:var(--muted)}dl.kv dd{margin:0}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  nav.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;padding:10px;gap:2px}
+  .brand{width:100%;padding:2px 8px 6px}.side .foot{display:none}
+  nav.side a[aria-current="page"]{box-shadow:none}
+}
+</style>
+
+<div class="banner">Rama Git Producion</div>
+<div class="app">
+  <nav class="side" id="side" aria-label="Secciones">
+    <div class="brand">Gestión de Convenios<small>Administración</small></div>
+    <a href="#inicio" data-r="inicio">Inicio</a>
+    <a href="#catalogo" data-r="catalogo">Catálogo</a>
+    <a href="#alta" data-r="alta">Alta individual</a>
+    <a href="#masiva" data-r="masiva">Alta masiva</a>
+    <a href="#auditoria" data-r="auditoria">Auditoría de PDFs <span class="badge" id="badge"></span></a>
+    <a href="#configuracion" data-r="configuracion">Configuración</a>
+    <div class="foot">Versión de prueba 0.1</div>
+  </nav>
+  <main id="view"></main>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>window.CONVENIOS_EJEMPLO = [{"folio":"CI-2023-018","tipo":"Internacional","institucion":"Universidad de Salamanca del Norte","sector":"Empresarial","objeto":"Bolsa de trabajo y seguimiento de egresados","inicio":"2023-10-23","fin":"2026-10-23","responsable":"Lic. P. Domínguez","pdf":"ok","pdfArchivo":"CI-2023-018.pdf","revision":false},{"folio":"CI-2023-019","tipo":"Internacional","institucion":"University of Western Plains","sector":"Gubernamental","objeto":"Uso compartido de instalaciones","inicio":"2023-04-22","fin":"2026-04-22","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CI-2023-019.pdf","revision":false},{"folio":"CI-2023-020","tipo":"Internacional","institucion":"Asociación Latinoamericana de Ingeniería (Campus Sur)","sector":"Social","objeto":"Movilidad académica de estudiantes","inicio":"2023-08-11","fin":"2026-08-11","responsable":"Dra. R. Salinas","pdf":"ok","pdfArchivo":"CI-2023-020.pdf","revision":false},{"folio":"CI-2023-021","tipo":"Internacional","institucion":"Centro Andino de Investigación (Campus Centro)","sector":"Cultural","objeto":"Bolsa de trabajo y seguimiento de egresados","inicio":"2023-10-06","fin":"2025-10-06","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CI-2023-021.pdf","revision":false},{"folio":"CI-2024-025","tipo":"Internacional","institucion":"Universidade Federal do Planalto","sector":"Gubernamental","objeto":"Intercambio de docentes","inicio":"2024-01-19","fin":"2027-01-19","responsable":"Dra. R. Salinas","pdf":"falta","pdfArchivo":"CI-2024-025.pdf","revision":false},{"folio":"CI-2024-026","tipo":"Internacional","institucion":"Asociación Latinoamericana de Ingeniería","sector":"Social","objeto":"Intercambio de docentes","inicio":"2024-06-07","fin":"2026-06-07","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CI-2024-026.pdf","revision":false},{"folio":"CI-2024-027","tipo":"Internacional","institucion":"Instituto Tecnológico de Valparaíso (Campus Sur)","sector":"Salud","objeto":"Capacitación y educación continua","inicio":"2024-04-20","fin":"2028-04-20","responsable":"Mtro. L. Vega","pdf":"falta","pdfArchivo":"CI-2024-027.pdf","revision":false},{"folio":"CI-2024-028","tipo":"Internacional","institucion":"Universidade Federal do Planalto (Campus Centro)","sector":"Social","objeto":"Movilidad académica de estudiantes","inicio":"2024-04-16","fin":"2026-11-17","responsable":"Lic. P. Domínguez","pdf":"falta","pdfArchivo":"CI-2024-028.pdf","revision":false},{"folio":"CI-2025-016","tipo":"Internacional","institucion":"Instituto Tecnológico de Valparaíso","sector":"Social","objeto":"Movilidad académica de estudiantes","inicio":"2025-08-26","fin":"2028-08-26","responsable":"Lic. P. Domínguez","pdf":"ok","pdfArchivo":"CI-2025-016.pdf","revision":false},{"folio":"CI-2025-017","tipo":"Internacional","institucion":"Fundación Europea de Ciencia","sector":"Educativo","objeto":"Estancias de investigación","inicio":"2025-09-25","fin":"2026-11-29","responsable":"Dr. M. Cortés","pdf":"ok","pdfArchivo":"CI-2025-017.pdf","revision":false},{"folio":"CI-2025-018","tipo":"Internacional","institucion":"Université de Lorraine Sud","sector":"Social","objeto":"Estancias de investigación","inicio":"2025-07-03","fin":"2029-07-03","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CI-2025-018.pdf","revision":false},{"folio":"CI-2025-019","tipo":"Internacional","institucion":"Hochschule für Angewandte Technik","sector":"Educativo","objeto":"Intercambio de docentes","inicio":"2025-02-06","fin":"2027-02-06","responsable":"Lic. J. Hernández","pdf":"falta","pdfArchivo":"CI-2025-019.pdf","revision":false},{"folio":"CI-2025-020","tipo":"Internacional","institucion":"Fundación Europea de Ciencia (Campus Centro)","sector":"Educativo","objeto":"Bolsa de trabajo y seguimiento de egresados","inicio":"2025-06-24","fin":"2027-06-24","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CI-2025-020.pdf","revision":false},{"folio":"CI-2025-021","tipo":"Internacional","institucion":"Université de Lorraine Sud (Campus Sur)","sector":"Salud","objeto":"Bolsa de trabajo y seguimiento de egresados","inicio":"2025-05-05","fin":"2028-05-05","responsable":"Mtro. L. Vega","pdf":"ok","pdfArchivo":"CI-2025-021.pdf","revision":false},{"folio":"CI-2026-017","tipo":"Internacional","institucion":"Red Iberoamericana de Posgrados","sector":"Social","objeto":"Estancias de investigación","inicio":"2026-04-05","fin":"2031-04-05","responsable":"Dr. M. Cortés","pdf":"ok","pdfArchivo":"CI-2026-017.pdf","revision":true},{"folio":"CI-2026-018","tipo":"Internacional","institucion":"Centro Andino de Investigación","sector":"Educativo","objeto":"Movilidad académica de estudiantes","inicio":"2026-02-01","fin":"2026-07-03","responsable":"Dra. R. Salinas","pdf":"ok","pdfArchivo":"CI-2026-018.pdf","revision":false},{"folio":"CI-2026-019","tipo":"Internacional","institucion":"Universidad de Salamanca del Norte (Campus Sur)","sector":"Salud","objeto":"Prácticas profesionales y servicio social","inicio":"2026-05-16","fin":"2031-05-16","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CI-2026-019.pdf","revision":false},{"folio":"CI-2026-020","tipo":"Internacional","institucion":"Red Iberoamericana de Posgrados (Campus Sur)","sector":"Social","objeto":"Bolsa de trabajo y seguimiento de egresados","inicio":"2026-02-12","fin":"2031-02-12","responsable":"Lic. P. Domínguez","pdf":"ok","pdfArchivo":"CI-2026-020.pdf","revision":false},{"folio":"CL-2023-001","tipo":"Local","institucion":"Preparatoria Regional Norte","sector":"Gubernamental","objeto":"Intercambio de docentes","inicio":"2023-11-08","fin":"2026-11-08","responsable":"Dr. M. Cortés","pdf":"ok","pdfArchivo":"CL-2023-001.pdf","revision":false},{"folio":"CL-2023-002","tipo":"Local","institucion":"Instituto Técnico del Mezquital","sector":"Cultural","objeto":"Intercambio de docentes","inicio":"2023-10-16","fin":"2026-12-20","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CL-2023-002.pdf","revision":false},{"folio":"CL-2023-003","tipo":"Local","institucion":"Taller Industrial Tula","sector":"Gubernamental","objeto":"Prácticas profesionales y servicio social","inicio":"2023-10-07","fin":"2025-10-07","responsable":"Dr. M. Cortés","pdf":"falta","pdfArchivo":"CL-2023-003.pdf","revision":true},{"folio":"CL-2023-004","tipo":"Local","institucion":"Escuela Primaria Benito Reyes","sector":"Cultural","objeto":"Prácticas profesionales y servicio social","inicio":"2023-05-09","fin":"2025-05-09","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CL-2023-004.pdf","revision":false},{"folio":"CL-2023-005","tipo":"Local","institucion":"Despacho Jurídico Valle Norte","sector":"Cultural","objeto":"Programa de becas y apoyos","inicio":"2023-09-10","fin":"2027-09-10","responsable":"Dr. M. Cortés","pdf":"ok","pdfArchivo":"CL-2023-005.pdf","revision":false},{"folio":"CL-2023-006","tipo":"Local","institucion":"Asociación de Artesanos del Valle","sector":"Empresarial","objeto":"Movilidad académica de estudiantes","inicio":"2023-04-08","fin":"2027-04-08","responsable":"Dra. R. Salinas","pdf":"ok","pdfArchivo":"CL-2023-006.pdf","revision":false},{"folio":"CL-2023-007","tipo":"Local","institucion":"Casa de la Cultura Municipal (Campus Centro)","sector":"Empresarial","objeto":"Intercambio de docentes","inicio":"2023-12-23","fin":"2025-12-23","responsable":"Mtro. L. Vega","pdf":"ok","pdfArchivo":"CL-2023-007.pdf","revision":false},{"folio":"CL-2023-008","tipo":"Local","institucion":"Asociación de Productores Textiles (Campus Sur)","sector":"Gubernamental","objeto":"Bolsa de trabajo y seguimiento de egresados","inicio":"2023-11-23","fin":"2026-11-23","responsable":"Lic. P. Domínguez","pdf":"ok","pdfArchivo":"CL-2023-008.pdf","revision":false},{"folio":"CL-2023-009","tipo":"Local","institucion":"Colegio de Contadores del Valle (Campus Sur)","sector":"Cultural","objeto":"Cooperación cultural y deportiva","inicio":"2023-08-18","fin":"2026-09-22","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CL-2023-009.pdf","revision":false},{"folio":"CL-2023-010","tipo":"Local","institucion":"Consejo Ciudadano de Vinculación (Campus Centro)","sector":"Gubernamental","objeto":"Movilidad académica de estudiantes","inicio":"2023-06-06","fin":"2025-06-06","responsable":"Mtro. L. Vega","pdf":"ok","pdfArchivo":"CL-2023-010.pdf","revision":false},{"folio":"CL-2023-011","tipo":"Local","institucion":"Radio Comunitaria Voz del Valle (Campus Sur)","sector":"Gubernamental","objeto":"Desarrollo tecnológico y vinculación","inicio":"2023-12-12","fin":"2026-12-12","responsable":"Mtro. L. Vega","pdf":"ok","pdfArchivo":"CL-2023-011.pdf","revision":false},{"folio":"CL-2023-012","tipo":"Local","institucion":"Club Deportivo Regional Halcones (Campus Centro)","sector":"Cultural","objeto":"Movilidad académica de estudiantes","inicio":"2023-08-03","fin":"2026-08-03","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CL-2023-012.pdf","revision":false},{"folio":"CL-2024-001","tipo":"Local","institucion":"Cámara Regional de Comercio del Valle","sector":"Empresarial","objeto":"Desarrollo tecnológico y vinculación","inicio":"2024-10-09","fin":"2027-10-09","responsable":"Dr. M. Cortés","pdf":"ok","pdfArchivo":"CL-2024-001.pdf","revision":false},{"folio":"CL-2024-002","tipo":"Local","institucion":"Clínica Comunitaria San Rafael","sector":"Social","objeto":"Estancias de investigación","inicio":"2024-10-08","fin":"2027-10-08","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CL-2024-002.pdf","revision":true},{"folio":"CL-2024-003","tipo":"Local","institucion":"Cooperativa Agrícola Los Llanos","sector":"Gubernamental","objeto":"Intercambio de docentes","inicio":"2024-05-24","fin":"2028-05-24","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CL-2024-003.pdf","revision":false},{"folio":"CL-2024-004","tipo":"Local","institucion":"Centro de Salud Rural Zona 3","sector":"Educativo","objeto":"Uso compartido de instalaciones","inicio":"2024-01-22","fin":"2027-01-22","responsable":"Mtra. A. Ramírez","pdf":"falta","pdfArchivo":"CL-2024-004.pdf","revision":false},{"folio":"CL-2024-005","tipo":"Local","institucion":"Parque Industrial Cuenca Alta","sector":"Cultural","objeto":"Prácticas profesionales y servicio social","inicio":"2024-09-06","fin":"2027-09-06","responsable":"Lic. P. Domínguez","pdf":"ok","pdfArchivo":"CL-2024-005.pdf","revision":false},{"folio":"CL-2024-006","tipo":"Local","institucion":"Biblioteca Pública Regional","sector":"Gubernamental","objeto":"Intercambio de docentes","inicio":"2024-03-07","fin":"2027-03-07","responsable":"Dr. M. Cortés","pdf":"ok","pdfArchivo":"CL-2024-006.pdf","revision":false},{"folio":"CL-2024-007","tipo":"Local","institucion":"Instituto Técnico del Mezquital (Campus Norte)","sector":"Educativo","objeto":"Movilidad académica de estudiantes","inicio":"2024-04-26","fin":"2028-04-26","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CL-2024-007.pdf","revision":false},{"folio":"CL-2024-008","tipo":"Local","institucion":"Centro de Salud Rural Zona 3 (Campus Sur)","sector":"Gubernamental","objeto":"Colaboración en proyectos de investigación","inicio":"2024-12-23","fin":"2027-12-23","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CL-2024-008.pdf","revision":true},{"folio":"CL-2024-009","tipo":"Local","institucion":"Parque Industrial Cuenca Alta (Campus Sur)","sector":"Salud","objeto":"Colaboración en proyectos de investigación","inicio":"2024-04-15","fin":"2026-04-15","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CL-2024-009.pdf","revision":false},{"folio":"CL-2024-010","tipo":"Local","institucion":"Fundación Comunitaria Horizonte (Campus Centro)","sector":"Cultural","objeto":"Capacitación y educación continua","inicio":"2024-12-13","fin":"2027-12-13","responsable":"Mtro. L. Vega","pdf":"ok","pdfArchivo":"CL-2024-010.pdf","revision":false},{"folio":"CL-2024-011","tipo":"Local","institucion":"Escuela Primaria Benito Reyes (Campus Centro)","sector":"Cultural","objeto":"Bolsa de trabajo y seguimiento de egresados","inicio":"2024-10-15","fin":"2027-10-15","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CL-2024-011.pdf","revision":false},{"folio":"CL-2024-012","tipo":"Local","institucion":"Despacho Jurídico Valle Norte (Campus Centro)","sector":"Educativo","objeto":"Desarrollo tecnológico y vinculación","inicio":"2024-03-23","fin":"2027-03-23","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CL-2024-012.pdf","revision":false},{"folio":"CL-2025-001","tipo":"Local","institucion":"Colegio de Contadores del Valle","sector":"Cultural","objeto":"Intercambio de docentes","inicio":"2025-09-12","fin":"2029-09-12","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CL-2025-001.pdf","revision":false},{"folio":"CL-2025-002","tipo":"Local","institucion":"Consejo Ciudadano de Vinculación","sector":"Cultural","objeto":"Desarrollo tecnológico y vinculación","inicio":"2025-04-15","fin":"2027-04-15","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CL-2025-002.pdf","revision":false},{"folio":"CL-2025-003","tipo":"Local","institucion":"Radio Comunitaria Voz del Valle","sector":"Empresarial","objeto":"Movilidad académica de estudiantes","inicio":"2025-06-06","fin":"2027-06-06","responsable":"Lic. P. Domínguez","pdf":"ok","pdfArchivo":"CL-2025-003.pdf","revision":false},{"folio":"CL-2025-004","tipo":"Local","institucion":"Club Deportivo Regional Halcones","sector":"Educativo","objeto":"Bolsa de trabajo y seguimiento de egresados","inicio":"2025-12-14","fin":"2025-10-02","responsable":"Mtro. L. Vega","pdf":"ok","pdfArchivo":"CL-2025-004.pdf","revision":false},{"folio":"CL-2025-005","tipo":"Local","institucion":"Clínica Comunitaria San Rafael (Campus Sur)","sector":"Salud","objeto":"Capacitación y educación continua","inicio":"2025-09-08","fin":"2026-11-28","responsable":"Lic. J. Hernández","pdf":"falta","pdfArchivo":"CL-2025-005.pdf","revision":false},{"folio":"CL-2025-006","tipo":"Local","institucion":"Cooperativa Agrícola Los Llanos (Campus Centro)","sector":"Social","objeto":"Programa de becas y apoyos","inicio":"2025-12-02","fin":"2029-12-02","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CL-2025-006.pdf","revision":false},{"folio":"CL-2025-007","tipo":"Local","institucion":"Biblioteca Pública Regional (Campus Norte)","sector":"Empresarial","objeto":"Programa de becas y apoyos","inicio":"2025-07-15","fin":"2026-12-27","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CL-2025-007.pdf","revision":false},{"folio":"CL-2026-001","tipo":"Local","institucion":"Casa de la Cultura Municipal","sector":"Cultural","objeto":"Desarrollo tecnológico y vinculación","inicio":"2026-12-07","fin":"2029-12-07","responsable":"Lic. J. Hernández","pdf":"falta","pdfArchivo":"CL-2026-001.pdf","revision":false},{"folio":"CL-2026-002","tipo":"Local","institucion":"Asociación de Productores Textiles","sector":"Gubernamental","objeto":"Intercambio de docentes","inicio":"2026-03-11","fin":"2025-12-08","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CL-2026-002.pdf","revision":false},{"folio":"CL-2026-003","tipo":"Local","institucion":"Fundación Comunitaria Horizonte","sector":"Salud","objeto":"Intercambio de docentes","inicio":"2026-03-04","fin":"2030-03-04","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CL-2026-003.pdf","revision":false},{"folio":"CL-2026-004","tipo":"Local","institucion":"Centro de Desarrollo Empresarial Local","sector":"Social","objeto":"Estancias de investigación","inicio":"2026-06-02","fin":"2026-11-08","responsable":"Dra. R. Salinas","pdf":"ok","pdfArchivo":"CL-2026-004.pdf","revision":false},{"folio":"CL-2026-005","tipo":"Local","institucion":"Cámara Regional de Comercio del Valle (Campus Norte)","sector":"Social","objeto":"Estancias de investigación","inicio":"2026-09-16","fin":"2031-09-16","responsable":"Lic. P. Domínguez","pdf":"ok","pdfArchivo":"CL-2026-005.pdf","revision":false},{"folio":"CL-2026-006","tipo":"Local","institucion":"Preparatoria Regional Norte (Campus Centro)","sector":"Gubernamental","objeto":"Desarrollo tecnológico y vinculación","inicio":"2026-10-24","fin":"2029-10-24","responsable":"Dr. M. Cortés","pdf":"ok","pdfArchivo":"CL-2026-006.pdf","revision":false},{"folio":"CL-2026-007","tipo":"Local","institucion":"Taller Industrial Tula (Campus Norte)","sector":"Gubernamental","objeto":"Cooperación cultural y deportiva","inicio":"2026-08-19","fin":"2031-08-19","responsable":"Dra. R. Salinas","pdf":"ok","pdfArchivo":"CL-2026-007.pdf","revision":false},{"folio":"CL-2026-008","tipo":"Local","institucion":"Centro de Desarrollo Empresarial Local (Campus Sur)","sector":"Salud","objeto":"Estancias de investigación","inicio":"2026-04-17","fin":"2028-04-17","responsable":"Dr. M. Cortés","pdf":"ok","pdfArchivo":"CL-2026-008.pdf","revision":false},{"folio":"CL-2026-009","tipo":"Local","institucion":"Asociación de Artesanos del Valle (Campus Centro)","sector":"Empresarial","objeto":"Programa de becas y apoyos","inicio":"2026-09-23","fin":"2030-09-23","responsable":"Mtro. L. Vega","pdf":"ok","pdfArchivo":"CL-2026-009.pdf","revision":false},{"folio":"CN-2023-013","tipo":"Nacional","institucion":"Red Nacional de Bibliotecas Académicas","sector":"Social","objeto":"Programa de becas y apoyos","inicio":"2023-08-01","fin":"2025-08-01","responsable":"Dra. R. Salinas","pdf":"ok","pdfArchivo":"CN-2023-013.pdf","revision":true},{"folio":"CN-2023-014","tipo":"Nacional","institucion":"Corporativo Industrial del Bajío","sector":"Educativo","objeto":"Intercambio de docentes","inicio":"2023-04-26","fin":"2027-01-17","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CN-2023-014.pdf","revision":false},{"folio":"CN-2023-015","tipo":"Nacional","institucion":"Asociación Nacional de Universidades","sector":"Gubernamental","objeto":"Desarrollo tecnológico y vinculación","inicio":"2023-12-21","fin":"2027-12-21","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CN-2023-015.pdf","revision":false},{"folio":"CN-2023-016","tipo":"Nacional","institucion":"Tecnología y Soluciones del Norte (Campus Norte)","sector":"Gubernamental","objeto":"Intercambio de docentes","inicio":"2023-11-01","fin":"2025-11-01","responsable":"Dra. R. Salinas","pdf":"ok","pdfArchivo":"CN-2023-016.pdf","revision":false},{"folio":"CN-2023-017","tipo":"Nacional","institucion":"Consorcio Agroalimentario del Sureste (Campus Norte)","sector":"Social","objeto":"Desarrollo tecnológico y vinculación","inicio":"2023-02-19","fin":"2026-02-19","responsable":"Dra. R. Salinas","pdf":"falta","pdfArchivo":"CN-2023-017.pdf","revision":false},{"folio":"CN-2024-013","tipo":"Nacional","institucion":"Universidad Tecnológica del Centro","sector":"Cultural","objeto":"Bolsa de trabajo y seguimiento de egresados","inicio":"2024-05-18","fin":"2026-05-18","responsable":"Lic. J. Hernández","pdf":"falta","pdfArchivo":"CN-2024-013.pdf","revision":false},{"folio":"CN-2024-014","tipo":"Nacional","institucion":"Instituto Nacional de Estudios Aplicados","sector":"Cultural","objeto":"Movilidad académica de estudiantes","inicio":"2024-01-11","fin":"2027-01-11","responsable":"Lic. P. Domínguez","pdf":"ok","pdfArchivo":"CN-2024-014.pdf","revision":false},{"folio":"CN-2024-015","tipo":"Nacional","institucion":"Consejo Mexicano de Innovación","sector":"Gubernamental","objeto":"Desarrollo tecnológico y vinculación","inicio":"2024-01-07","fin":"2027-01-07","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CN-2024-015.pdf","revision":false},{"folio":"CN-2024-016","tipo":"Nacional","institucion":"Colegio Nacional de Ingenieros","sector":"Salud","objeto":"Intercambio de docentes","inicio":"2024-09-12","fin":"2027-09-12","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CN-2024-016.pdf","revision":false},{"folio":"CN-2024-017","tipo":"Nacional","institucion":"Tecnología y Soluciones del Norte","sector":"Educativo","objeto":"Uso compartido de instalaciones","inicio":"2024-10-12","fin":"2026-05-15","responsable":"Mtro. L. Vega","pdf":"ok","pdfArchivo":"CN-2024-017.pdf","revision":false},{"folio":"CN-2024-018","tipo":"Nacional","institucion":"Centro de Investigación del Pacífico","sector":"Educativo","objeto":"Movilidad académica de estudiantes","inicio":"2024-05-04","fin":"2029-05-04","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CN-2024-018.pdf","revision":false},{"folio":"CN-2024-019","tipo":"Nacional","institucion":"Observatorio Nacional de Educación","sector":"Educativo","objeto":"Uso compartido de instalaciones","inicio":"2024-06-14","fin":"2028-06-14","responsable":"Mtro. L. Vega","pdf":"falta","pdfArchivo":"CN-2024-019.pdf","revision":false},{"folio":"CN-2024-020","tipo":"Nacional","institucion":"Corporativo Industrial del Bajío (Campus Sur)","sector":"Cultural","objeto":"Intercambio de docentes","inicio":"2024-07-23","fin":"2028-07-23","responsable":"Mtra. A. Ramírez","pdf":"falta","pdfArchivo":"CN-2024-020.pdf","revision":false},{"folio":"CN-2024-021","tipo":"Nacional","institucion":"Fundación Nacional para la Salud (Campus Sur)","sector":"Empresarial","objeto":"Capacitación y educación continua","inicio":"2024-09-16","fin":"2026-09-16","responsable":"Mtro. L. Vega","pdf":"ok","pdfArchivo":"CN-2024-021.pdf","revision":false},{"folio":"CN-2024-022","tipo":"Nacional","institucion":"Colegio Nacional de Ingenieros (Campus Norte)","sector":"Cultural","objeto":"Uso compartido de instalaciones","inicio":"2024-10-18","fin":"2027-01-11","responsable":"Dr. M. Cortés","pdf":"ok","pdfArchivo":"CN-2024-022.pdf","revision":false},{"folio":"CN-2024-023","tipo":"Nacional","institucion":"Cámara Nacional de la Industria Digital (Campus Centro)","sector":"Salud","objeto":"Desarrollo tecnológico y vinculación","inicio":"2024-03-14","fin":"2027-03-14","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CN-2024-023.pdf","revision":false},{"folio":"CN-2024-024","tipo":"Nacional","institucion":"Grupo Editorial Mexicano (Campus Sur)","sector":"Educativo","objeto":"Capacitación y educación continua","inicio":"2024-01-05","fin":"2027-01-05","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CN-2024-024.pdf","revision":false},{"folio":"CN-2025-008","tipo":"Nacional","institucion":"Fundación Nacional para la Salud","sector":"Gubernamental","objeto":"Prácticas profesionales y servicio social","inicio":"2025-07-09","fin":"2030-07-09","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CN-2025-008.pdf","revision":false},{"folio":"CN-2025-009","tipo":"Nacional","institucion":"Cámara Nacional de la Industria Digital","sector":"Salud","objeto":"Intercambio de docentes","inicio":"2025-05-05","fin":"2029-05-05","responsable":"Mtro. L. Vega","pdf":"ok","pdfArchivo":"CN-2025-009.pdf","revision":false},{"folio":"CN-2025-010","tipo":"Nacional","institucion":"Federación Deportiva Universitaria","sector":"Empresarial","objeto":"Prácticas profesionales y servicio social","inicio":"2025-02-23","fin":"2026-11-19","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CN-2025-010.pdf","revision":false},{"folio":"CN-2025-011","tipo":"Nacional","institucion":"Universidad Tecnológica del Centro (Campus Centro)","sector":"Educativo","objeto":"Colaboración en proyectos de investigación","inicio":"2025-06-21","fin":"2028-06-21","responsable":"Lic. P. Domínguez","pdf":"falta","pdfArchivo":"CN-2025-011.pdf","revision":false},{"folio":"CN-2025-012","tipo":"Nacional","institucion":"Instituto Nacional de Estudios Aplicados (Campus Centro)","sector":"Salud","objeto":"Movilidad académica de estudiantes","inicio":"2025-07-01","fin":"2029-07-01","responsable":"Lic. P. Domínguez","pdf":"ok","pdfArchivo":"CN-2025-012.pdf","revision":false},{"folio":"CN-2025-013","tipo":"Nacional","institucion":"Red Nacional de Bibliotecas Académicas (Campus Sur)","sector":"Social","objeto":"Cooperación cultural y deportiva","inicio":"2025-09-01","fin":"2026-01-04","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CN-2025-013.pdf","revision":false},{"folio":"CN-2025-014","tipo":"Nacional","institucion":"Consejo Mexicano de Innovación (Campus Sur)","sector":"Cultural","objeto":"Colaboración en proyectos de investigación","inicio":"2025-01-10","fin":"2030-01-10","responsable":"Mtra. A. Ramírez","pdf":"ok","pdfArchivo":"CN-2025-014.pdf","revision":false},{"folio":"CN-2025-015","tipo":"Nacional","institucion":"Observatorio Nacional de Educación (Campus Sur)","sector":"Educativo","objeto":"Bolsa de trabajo y seguimiento de egresados","inicio":"2025-07-21","fin":"2026-12-21","responsable":"Dra. R. Salinas","pdf":"ok","pdfArchivo":"CN-2025-015.pdf","revision":false},{"folio":"CN-2026-010","tipo":"Nacional","institucion":"Grupo Editorial Mexicano","sector":"Empresarial","objeto":"Uso compartido de instalaciones","inicio":"2026-11-14","fin":"2031-11-14","responsable":"Dra. R. Salinas","pdf":"ok","pdfArchivo":"CN-2026-010.pdf","revision":false},{"folio":"CN-2026-011","tipo":"Nacional","institucion":"Instituto de Capacitación Laboral","sector":"Social","objeto":"Programa de becas y apoyos","inicio":"2026-05-18","fin":"2030-05-18","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CN-2026-011.pdf","revision":false},{"folio":"CN-2026-012","tipo":"Nacional","institucion":"Consorcio Agroalimentario del Sureste","sector":"Salud","objeto":"Capacitación y educación continua","inicio":"2026-03-04","fin":"2029-03-04","responsable":"Mtro. L. Vega","pdf":"ok","pdfArchivo":"CN-2026-012.pdf","revision":true},{"folio":"CN-2026-013","tipo":"Nacional","institucion":"Asociación Nacional de Universidades (Campus Centro)","sector":"Cultural","objeto":"Cooperación cultural y deportiva","inicio":"2026-04-18","fin":"2030-04-18","responsable":"Dr. M. Cortés","pdf":"ok","pdfArchivo":"CN-2026-013.pdf","revision":false},{"folio":"CN-2026-014","tipo":"Nacional","institucion":"Centro de Investigación del Pacífico (Campus Centro)","sector":"Cultural","objeto":"Movilidad académica de estudiantes","inicio":"2026-06-04","fin":"2029-06-04","responsable":"Lic. J. Hernández","pdf":"ok","pdfArchivo":"CN-2026-014.pdf","revision":false},{"folio":"CN-2026-015","tipo":"Nacional","institucion":"Instituto de Capacitación Laboral (Campus Norte)","sector":"Salud","objeto":"Colaboración en proyectos de investigación","inicio":"2026-09-19","fin":"2029-09-19","responsable":"Mtro. L. Vega","pdf":"ok","pdfArchivo":"CN-2026-015.pdf","revision":false},{"folio":"CN-2026-016","tipo":"Nacional","institucion":"Federación Deportiva Universitaria (Campus Norte)","sector":"Cultural","objeto":"Colaboración en proyectos de investigación","inicio":"2026-01-19","fin":"2026-03-11","responsable":"Lic. J. Hernández","pdf":"falta","pdfArchivo":"CN-2026-016.pdf","revision":false}];
+</script>
+<script>
+const KEY="convenios_admin_demo_v1";
+const CFG0={diasAviso:90,drive:"https://drive.google.com/drive/folders/1YVRabAWkaYT_85OnrK-wGQN_6p82RNB7",
+  carpetas:{Local:"C:\\Convenios\\Locales",Nacional:"C:\\Convenios\\Nacionales",Internacional:"C:\\Convenios\\Internacionales"}};
+const clone=o=>JSON.parse(JSON.stringify(o));
+let S;
+function load(){try{const r=localStorage.getItem(KEY);if(r){const o=JSON.parse(r);if(o&&o.items)return o}}catch(e){}
+  return {items:clone(window.CONVENIOS_EJEMPLO),cfg:clone(CFG0)}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+S=load();
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[m]));
+const norm=s=>String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+const HOY=new Date(), DAY=864e5;
+const fmt=d=>d?new Date(d+"T00:00:00").toLocaleDateString("es-MX",{day:"2-digit",month:"short",year:"numeric"}):"—";
+function est(c){const d=Math.round((new Date(c.fin+"T00:00:00")-HOY)/DAY);
+  if(d<0)return{k:"bad",t:"Vencido",d};if(d<=S.cfg.diasAviso)return{k:"warn",t:"Vence en "+d+" d",d};return{k:"ok",t:"Vigente",d}}
+const pillPdf=c=>c.pdf==="ok"?'<span class="pill p-ok">PDF localizado</span>':'<span class="pill p-bad">PDF no localizado</span>';
+const TIPOS=["Local","Nacional","Internacional"], SECT=["Educativo","Gubernamental","Empresarial","Salud","Social","Cultural"];
+const PRE={Local:"CL",Nacional:"CN",Internacional:"CI"};
+function toast(m){const t=$("#toast");t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>t.hidden=true,2600)}
+function pillEst(c){const e=est(c);return `<span class="pill p-${e.k}">${e.t}</span>`}
+function nextFolio(tipo,year){const p=`${PRE[tipo]}-${year}-`;let n=0;S.items.forEach(c=>{if(c.folio.startsWith(p))n=Math.max(n,+c.folio.slice(p.length)||0)});return p+String(n+1).padStart(3,"0")}
+
+/* ---------- navegación ---------- */
+let detailId=null, cat={q:"",tipo:"",sector:"",vig:"",pdf:"",page:1}, mas={text:"",rows:[]};
+const R={inicio,catalogo,detalle,alta,masiva,auditoria,configuracion};
+function go(){let h=(location.hash||"#inicio").slice(1);if(!R[h])h="inicio";if(h==="detalle"&&!detailId)h="catalogo";
+  document.querySelectorAll("#side a").forEach(a=>a.setAttribute("aria-current",a.dataset.r===(h==="detalle"?"catalogo":h)?"page":"false"));
+  const miss=S.items.filter(c=>c.pdf!=="ok").length;$("#badge").textContent=miss;$("#badge").hidden=!miss;
+  R[h]();window.scrollTo(0,0)}
+window.addEventListener("hashchange",go);
+function openDetail(f){detailId=f;if(location.hash==="#detalle")go();else location.hash="#detalle"}
+
+/* ---------- Inicio ---------- */
+function inicio(){
+  const it=S.items,E=it.map(est),venc=E.filter(e=>e.k==="bad").length,pv=E.filter(e=>e.k==="warn").length,miss=it.filter(c=>c.pdf!=="ok").length;
+  const por=TIPOS.map(t=>{const l=it.filter(c=>c.tipo===t),e=l.map(est);return{t,n:l.length,ok:e.filter(x=>x.k==="ok").length,w:e.filter(x=>x.k==="warn").length,b:e.filter(x=>x.k==="bad").length}});
+  const max=Math.max(...por.map(p=>p.n),1);
+  const prox=it.map(c=>({c,e:est(c)})).filter(x=>x.e.k==="warn").sort((a,b)=>a.e.d-b.e.d).slice(0,6);
+  $("#view").innerHTML=`<div class="pagehead"><div><h1>Inicio</h1><p>Resumen del catálogo de convenios.</p></div><a class="btn" href="#alta">Nuevo convenio</a></div>
+  <div class="stack">
+  <div class="grid tiles">
+    <a class="tile" href="#catalogo"><b>${it.length}</b><span>Convenios en total</span></a>
+    <a class="tile warn" href="#catalogo" data-f="warn"><b>${pv}</b><span>Por vencer (${S.cfg.diasAviso} días)</span></a>
+    <a class="tile bad" href="#catalogo" data-f="bad"><b>${venc}</b><span>Vencidos</span></a>
+    <a class="tile bad" href="#auditoria"><b>${miss}</b><span>PDFs sin localizar</span></a>
+  </div>
+  <div class="grid two">
+    <div class="panel"><h2>Convenios por tipo y vigencia</h2>
+      <div class="bars">${por.map(p=>`<div class="bar-row"><span>${p.t}es</span>
+        <div class="bar" style="width:${p.n/max*100}%" title="${p.n} convenios"><i class="c-ok" style="width:${p.ok/p.n*100}%"></i><i class="c-warn" style="width:${p.w/p.n*100}%"></i><i class="c-bad" style="width:${p.b/p.n*100}%"></i></div>
+        <b>${p.n}</b></div>`).join("")}</div>
+      <div class="legend"><span style="--c:var(--ok)">Vigentes</span><span style="--c:var(--warn)">Por vencer</span><span style="--c:var(--bad)">Vencidos</span></div></div>
+    <div class="panel"><h2>Próximos a vencer</h2><div class="items">${prox.length?prox.map(({c,e})=>`<div class="item" data-open="${c.folio}"><div><div class="t">${esc(c.institucion)}</div><div class="sub"><span class="folio">${c.folio}</span> · ${fmt(c.fin)}</div></div><span class="pill p-warn">${e.d} d</span></div>`).join(""):'<div class="sub">Ningún convenio vence en los próximos '+S.cfg.diasAviso+' días.</div>'}</div></div>
+  </div></div>`;
+  document.querySelectorAll("[data-f]").forEach(a=>a.onclick=()=>{cat={q:"",tipo:"",sector:"",vig:a.dataset.f,pdf:"",page:1}});
+  document.querySelectorAll("[data-open]").forEach(a=>a.onclick=()=>openDetail(a.dataset.open));
+}
+
+/* ---------- Catálogo ---------- */
+function catalogo(){
+  $("#view").innerHTML=`<div class="pagehead"><div><h1>Catálogo de convenios</h1><p>Busca por folio, institución u objeto y filtra por tipo, sector, vigencia o PDF.</p></div><a class="btn" href="#alta">Nuevo convenio</a></div>
+  <div class="filters">
+    <input type="search" id="cq" placeholder="Buscar…" value="${esc(cat.q)}" aria-label="Buscar">
+    <select id="ct" aria-label="Tipo"><option value="">Todos los tipos</option>${TIPOS.map(t=>`<option ${cat.tipo===t?"selected":""}>${t}</option>`).join("")}</select>
+    <select id="cs" aria-label="Sector"><option value="">Todos los sectores</option>${SECT.map(t=>`<option ${cat.sector===t?"selected":""}>${t}</option>`).join("")}</select>
+    <select id="cv" aria-label="Vigencia"><option value="">Toda vigencia</option><option value="ok" ${cat.vig==="ok"?"selected":""}>Vigentes</option><option value="warn" ${cat.vig==="warn"?"selected":""}>Por vencer</option><option value="bad" ${cat.vig==="bad"?"selected":""}>Vencidos</option></select>
+    <select id="cp" aria-label="PDF"><option value="">PDF: todos</option><option value="ok" ${cat.pdf==="ok"?"selected":""}>Con PDF</option><option value="falta" ${cat.pdf==="falta"?"selected":""}>Sin PDF</option></select>
+  </div><div id="tbl"></div>`;
+  const apply=()=>{cat.q=$("#cq").value;cat.tipo=$("#ct").value;cat.sector=$("#cs").value;cat.vig=$("#cv").value;cat.pdf=$("#cp").value;cat.page=1;table()};
+  ["#cq","#ct","#cs","#cv","#cp"].forEach(s=>$(s).oninput=apply);
+  table();
+}
+function table(){
+  const q=norm(cat.q.trim()),PER=15;
+  const rows=S.items.filter(c=>(!cat.tipo||c.tipo===cat.tipo)&&(!cat.sector||c.sector===cat.sector)&&(!cat.vig||est(c).k===cat.vig)&&(!cat.pdf||c.pdf===cat.pdf)&&
+    (!q||q.split(/\s+/).every(w=>norm([c.folio,c.institucion,c.objeto].join(" ")).includes(w)))).sort((a,b)=>a.folio.localeCompare(b.folio));
+  const pages=Math.max(1,Math.ceil(rows.length/PER));cat.page=Math.min(cat.page,pages);
+  const sl=rows.slice((cat.page-1)*PER,cat.page*PER);
+  $("#tbl").innerHTML=`<div class="tablewrap"><table><thead><tr><th>Folio</th><th>Institución</th><th>Tipo</th><th>Objeto</th><th>Fin</th><th>Vigencia</th><th>PDF</th></tr></thead><tbody>`+
+    (sl.length?sl.map(c=>`<tr class="click" data-open="${c.folio}"><td class="folio">${c.folio}${c.revision?' <span class="pill p-warn">Revisar</span>':""}</td><td><b>${esc(c.institucion)}</b><div class="sub">${c.sector}</div></td><td>${c.tipo}</td><td>${esc(c.objeto)}</td><td class="num">${fmt(c.fin)}</td><td>${pillEst(c)}</td><td>${c.pdf==="ok"?'<span class="pill p-ok">Sí</span>':'<span class="pill p-bad">Falta</span>'}</td></tr>`).join(""):`<tr><td colspan="7" class="sub" style="text-align:center;padding:32px">Ningún convenio coincide con los filtros.</td></tr>`)+
+    `</tbody></table></div><div class="pager"><span>${rows.length} convenios · página ${cat.page} de ${pages}</span><div><button class="btn ghost sm" id="pv" ${cat.page<=1?"disabled":""}>Anterior</button><button class="btn ghost sm" id="nx" ${cat.page>=pages?"disabled":""}>Siguiente</button></div></div>`;
+  $("#pv").onclick=()=>{cat.page--;table()};$("#nx").onclick=()=>{cat.page++;table()};
+  document.querySelectorAll("#tbl [data-open]").forEach(r=>r.onclick=()=>openDetail(r.dataset.open));
+}
+
+/* ---------- Detalle ---------- */
+function detalle(){
+  const c=S.items.find(x=>x.folio===detailId);if(!c){location.hash="#catalogo";return}
+  const e=est(c);
+  $("#view").innerHTML=`<div class="crumb"><a href="#catalogo">Catálogo</a> / ${c.folio}</div>
+  <div class="pagehead"><div><h1>${esc(c.institucion)}</h1><p><span class="folio">${c.folio}</span> · ${c.tipo} · ${pillEst(c)} ${c.revision?'<span class="pill p-warn">Marcado para revisión</span>':""}</p></div></div>
+  <div class="stack">
+  <div class="panel"><form class="f" id="df">
+    <div class="field full"><label for="d_i">Institución</label><input id="d_i" value="${esc(c.institucion)}" required></div>
+    <div class="field"><label for="d_s">Sector</label><select id="d_s">${SECT.map(s=>`<option ${c.sector===s?"selected":""}>${s}</option>`).join("")}</select></div>
+    <div class="field"><label for="d_r">Área responsable</label><input id="d_r" value="${esc(c.responsable)}"></div>
+    <div class="field full"><label for="d_o">Objeto del convenio</label><input id="d_o" value="${esc(c.objeto)}"></div>
+    <div class="field"><label for="d_a">Inicio</label><input type="date" id="d_a" value="${c.inicio}"></div>
+    <div class="field"><label for="d_b">Fin de vigencia</label><input type="date" id="d_b" value="${c.fin}"><span class="err" id="d_e"></span></div>
+    <div class="field full actions"><button class="btn" type="submit">Guardar cambios</button>
+      <button class="btn ghost" type="button" id="rev">${c.revision?"Quitar marca de revisión":"Marcar para revisión"}</button>
+      <span style="flex:1"></span><button class="btn danger" type="button" id="del">Eliminar</button></div>
+  </form></div>
+  <div class="panel"><h2>Documento PDF</h2><div class="pdfbox"><div>${pillPdf(c)}<div class="sub" style="margin-top:4px">Archivo esperado: <span class="folio">${esc(S.cfg.carpetas[c.tipo])}\\${c.pdfArchivo}</span></div></div>
+    <div class="actions"><a class="btn ghost" href="${esc(S.cfg.drive)}" target="_blank" rel="noopener">Abrir PDF</a><button class="btn ghost" id="chk">Verificar de nuevo</button></div></div></div></div>`;
+  $("#df").onsubmit=ev=>{ev.preventDefault();if($("#d_b").value<=$("#d_a").value){$("#d_e").textContent="La fecha final debe ser posterior al inicio.";return}
+    Object.assign(c,{institucion:$("#d_i").value.trim(),sector:$("#d_s").value,responsable:$("#d_r").value.trim(),objeto:$("#d_o").value.trim(),inicio:$("#d_a").value,fin:$("#d_b").value});save();toast("Cambios guardados");detalle()};
+  $("#rev").onclick=()=>{c.revision=!c.revision;save();toast(c.revision?"Marcado para revisión":"Marca quitada");detalle()};
+  $("#chk").onclick=()=>{toast(c.pdf==="ok"?"El PDF sigue localizado":"Sigue sin localizarse en la carpeta")};
+  let sure=false;$("#del").onclick=function(){if(!sure){sure=true;this.textContent="Confirmar eliminación";return}
+    S.items=S.items.filter(x=>x!==c);save();toast("Convenio eliminado");location.hash="#catalogo"};
+}
+
+/* ---------- Alta individual ---------- */
+function alta(){
+  const y=new Date().getFullYear();
+  $("#view").innerHTML=`<div class="pagehead"><div><h1>Alta individual</h1><p>Captura un convenio nuevo y verifica su PDF al instante.</p></div></div>
+  <div class="panel"><form class="f" id="af" novalidate>
+    <div class="field"><label for="a_t">Tipo</label><select id="a_t">${TIPOS.map(t=>`<option>${t}</option>`).join("")}</select></div>
+    <div class="field"><label for="a_f">Folio</label><input id="a_f" value="${nextFolio("Local",y)}"><span class="hint">Se sugiere según el tipo y el año. Puedes cambiarlo.</span><span class="err" id="e_f"></span></div>
+    <div class="field full"><label for="a_i">Institución</label><input id="a_i" placeholder="Nombre de la institución"><span class="err" id="e_i"></span></div>
+    <div class="field"><label for="a_s">Sector</label><select id="a_s">${SECT.map(s=>`<option>${s}</option>`).join("")}</select></div>
+    <div class="field"><label for="a_r">Área responsable</label><input id="a_r" placeholder="Nombre del responsable"></div>
+    <div class="field full"><label for="a_o">Objeto del convenio</label><input id="a_o" placeholder="¿Para qué es el convenio?"><span class="err" id="e_o"></span></div>
+    <div class="field"><label for="a_a">Inicio</label><input type="date" id="a_a"><span class="err" id="e_a"></span></div>
+    <div class="field"><label for="a_b">Fin de vigencia</label><input type="date" id="a_b"><span class="err" id="e_b"></span></div>
+    <div class="field full"><div class="pdfbox"><div id="pdfst"><span class="pill p-mute">Sin verificar</span><div class="sub" style="margin-top:4px">Se busca <span class="folio" id="pdfname"></span> en la carpeta del tipo seleccionado.</div></div>
+      <div class="actions"><label class="hint"><input type="checkbox" id="a_sim" checked> Simular que el PDF ya está en la carpeta</label><button class="btn ghost" type="button" id="a_v">Verificar PDF</button></div></div></div>
+    <div class="field full actions"><button class="btn" type="submit">Guardar convenio</button><a class="btn ghost" href="#catalogo">Cancelar</a></div>
+  </form></div>`;
+  const pdf=()=>{$("#pdfname").textContent=$("#a_f").value+".pdf"};pdf();
+  $("#a_t").onchange=()=>{$("#a_f").value=nextFolio($("#a_t").value,y);pdf()};$("#a_f").oninput=pdf;
+  $("#a_v").onclick=()=>{const ok=$("#a_sim").checked;$("#pdfst").firstElementChild.outerHTML=ok?'<span class="pill p-ok">PDF localizado</span>':'<span class="pill p-bad">PDF no localizado</span>'};
+  $("#af").onsubmit=ev=>{ev.preventDefault();let bad=false;const set=(id,m)=>{$("#e_"+id).textContent=m||"";$("#a_"+id).classList.toggle("bad",!!m);if(m)bad=true};
+    const f=$("#a_f").value.trim();
+    set("f",!f?"Escribe el folio.":S.items.some(c=>c.folio===f)?"Ese folio ya existe.":"");
+    set("i",!$("#a_i").value.trim()?"Escribe el nombre de la institución.":"");set("o",!$("#a_o").value.trim()?"Describe el objeto del convenio.":"");
+    set("a",!$("#a_a").value?"Elige la fecha de inicio.":"");set("b",!$("#a_b").value?"Elige la fecha final.":$("#a_b").value<=$("#a_a").value?"Debe ser posterior al inicio.":"");
+    if(bad)return;
+    S.items.push({folio:f,tipo:$("#a_t").value,institucion:$("#a_i").value.trim(),sector:$("#a_s").value,objeto:$("#a_o").value.trim(),inicio:$("#a_a").value,fin:$("#a_b").value,responsable:$("#a_r").value.trim(),pdf:$("#a_sim").checked?"ok":"falta",pdfArchivo:f+".pdf",revision:false});
+    save();toast("Convenio "+f+" guardado");openDetail(f)};
+}
+
+/* ---------- Alta masiva ---------- */
+const MUESTRA=`CL-2026-901\tLocal\tCentro Comunitario El Mirador\tSocial\tServicio social y voluntariado\t01/11/2026\t01/11/2029\tLic. J. Hernández
+CN-2026-902\tNacional\tInstituto de Tecnología Aplicada del Norte\tEducativo\tMovilidad académica de estudiantes\t2026-11-15\t2028-11-15\tDr. M. Cortés
+CI-2026-903\tInternacional\tUniversity of Eastern Lakes\tEducativo\tEstancias de investigación\t10/01/2027\t10/01/2030\tDra. R. Salinas
+CL-2026-904\tLocal\tTaller Escuela Metálica\tEmpresarial\tPrácticas profesionales\t05/12/2026\t05/12/2025\tMtro. L. Vega
+CX-2026-905\tRegional\tAsociación de Comerciantes Unidos\tEmpresarial\tBolsa de trabajo\t01/12/2026\t01/12/2028\tLic. P. Domínguez`;
+function parseDate(s){s=(s||"").trim();let m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);if(!m){const n=s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);if(!n)return null;m=[0,n[3],n[2].padStart(2,"0"),n[1].padStart(2,"0")]}
+  const d=new Date(`${m[1]}-${m[2]}-${m[3]}T00:00:00`);return isNaN(d)||d.getMonth()+1!==+m[2]?null:`${m[1]}-${m[2]}-${m[3]}`}
+function parseMasiva(text){
+  const seen=new Set(S.items.map(c=>c.folio));
+  return text.split(/\r?\n/).filter(l=>l.trim()).map((l,i)=>{
+    const p=(l.includes("\t")?l.split("\t"):l.split(";")).map(x=>x.trim());
+    const [folio,tipo,inst,sector,objeto,a,b,resp]=p;const err=[];
+    if(p.length<7)err.push("Faltan columnas");
+    if(!folio)err.push("Sin folio");else if(seen.has(folio))err.push("Folio repetido");
+    if(!TIPOS.includes(tipo))err.push("Tipo no válido");
+    if(!inst)err.push("Sin institución");
+    const fa=parseDate(a),fb=parseDate(b);if(!fa)err.push("Inicio no válido");if(!fb)err.push("Fin no válido");if(fa&&fb&&fb<=fa)err.push("Fin anterior al inicio");
+    if(folio)seen.add(folio);
+    return{n:i+1,err,c:{folio,tipo,institucion:inst,sector:SECT.includes(sector)?sector:"Social",objeto:objeto||"",inicio:fa,fin:fb,responsable:resp||"",pdf:"falta",pdfArchivo:folio+".pdf",revision:false}}});
+}
+function masiva(){
+  $("#view").innerHTML=`<div class="pagehead"><div><h1>Alta masiva</h1><p>Copia las filas desde Excel y pégalas aquí.</p></div></div>
+  <div class="stack"><div class="panel"><div class="hint" style="margin-bottom:8px">Orden de columnas: Folio, Tipo, Institución, Sector, Objeto, Inicio, Fin, Responsable. Las fechas pueden venir como 31/12/2026 o 2026-12-31.</div>
+  <textarea id="m_t" rows="8" placeholder="Pega aquí las filas copiadas de Excel…" aria-label="Filas de Excel">${esc(mas.text)}</textarea>
+  <div class="actions" style="margin-top:10px"><button class="btn" id="m_p">Revisar filas</button><button class="btn ghost" id="m_e">Cargar ejemplo</button><button class="btn ghost" id="m_c">Limpiar</button></div></div>
+  <div id="m_r"></div></div>`;
+  const show=()=>{const R_=mas.rows;if(!R_.length){$("#m_r").innerHTML="";return}
+    const ok=R_.filter(r=>!r.err.length).length;
+    $("#m_r").innerHTML=`<div class="panel"><div class="actions" style="justify-content:space-between;margin-bottom:12px"><h2 style="margin:0">Vista previa: ${ok} listos, ${R_.length-ok} con errores</h2><button class="btn" id="m_i" ${ok?"":"disabled"}>Importar ${ok} convenios</button></div>
+    <div class="tablewrap"><table><thead><tr><th>Fila</th><th>Folio</th><th>Institución</th><th>Tipo</th><th>Vigencia</th><th>Estado</th></tr></thead><tbody>${R_.map(r=>`<tr><td>${r.n}</td><td class="folio">${esc(r.c.folio)}</td><td>${esc(r.c.institucion)}</td><td>${esc(r.c.tipo)}</td><td class="num">${fmt(r.c.inicio)} – ${fmt(r.c.fin)}</td><td>${r.err.length?`<span class="pill p-bad">${esc(r.err.join(", "))}</span>`:'<span class="pill p-ok">Listo</span>'}</td></tr>`).join("")}</tbody></table></div></div>`;
+    const bi=$("#m_i");if(bi)bi.onclick=()=>{const add=R_.filter(r=>!r.err.length).map(r=>r.c);S.items.push(...add);save();mas={text:"",rows:[]};toast(add.length+" convenios importados");location.hash="#catalogo"}};
+  $("#m_p").onclick=()=>{mas.text=$("#m_t").value;mas.rows=parseMasiva(mas.text);show()};
+  $("#m_e").onclick=()=>{$("#m_t").value=MUESTRA;mas.text=MUESTRA;mas.rows=parseMasiva(MUESTRA);show()};
+  $("#m_c").onclick=()=>{mas={text:"",rows:[]};masiva()};
+  show();
+}
+
+/* ---------- Auditoría ---------- */
+function auditoria(){
+  const miss=S.items.filter(c=>c.pdf!=="ok").sort((a,b)=>a.folio.localeCompare(b.folio));
+  $("#view").innerHTML=`<div class="pagehead"><div><h1>Auditoría de PDFs</h1><p>Convenios cuyo PDF no se localizó en las carpetas configuradas.</p></div><button class="btn" id="scan">Volver a escanear carpetas</button></div>
+  <div class="stack"><div class="panel" id="sc" hidden><h2 id="sct">Escaneando…</h2><div class="progress"><i id="scb"></i></div></div>
+  <div class="grid tiles"><div class="tile bad"><b>${miss.length}</b><span>Sin PDF</span></div><div class="tile"><b>${S.items.length-miss.length}</b><span>Con PDF localizado</span></div><div class="tile"><b>${Math.round((S.items.length-miss.length)/S.items.length*100)}%</b><span>Cobertura</span></div></div>
+  <div class="tablewrap"><table><thead><tr><th>Folio</th><th>Institución</th><th>Archivo esperado</th><th></th></tr></thead><tbody>${miss.length?miss.map(c=>`<tr><td class="folio">${c.folio}</td><td><b>${esc(c.institucion)}</b><div class="sub">${c.tipo}</div></td><td class="folio">${esc(S.cfg.carpetas[c.tipo])}\\${c.pdfArchivo}</td><td><button class="btn ghost sm" data-open="${c.folio}">Ver convenio</button></td></tr>`).join(""):'<tr><td colspan="4" class="sub" style="text-align:center;padding:32px">Todos los convenios tienen su PDF.</td></tr>'}</tbody></table></div></div>`;
+  document.querySelectorAll("[data-open]").forEach(b=>b.onclick=()=>openDetail(b.dataset.open));
+  $("#scan").onclick=()=>{$("#scan").disabled=true;$("#sc").hidden=false;let p=0;const iv=setInterval(()=>{p+=12;$("#scb").style.width=Math.min(p,100)+"%";$("#sct").textContent="Escaneando carpetas… "+Math.min(p,100)+"%";
+    if(p>=100){clearInterval(iv);let f=0;miss.forEach((c,i)=>{if(i%3===0){c.pdf="ok";f++}});save();toast(f?f+" PDFs encontrados en el escaneo":"No se encontraron PDFs nuevos");go()}},220)};
+}
+
+/* ---------- Configuración ---------- */
+function configuracion(){
+  const c=S.cfg;
+  $("#view").innerHTML=`<div class="pagehead"><div><h1>Configuración</h1><p>Carpetas de los PDFs y parámetros generales.</p></div></div>
+  <div class="stack"><div class="panel"><h2>Carpetas de PDFs por tipo</h2><form class="f" id="cf">
+    ${TIPOS.map(t=>`<div class="field full"><label for="k_${t}">${t}es</label><div class="actions"><input id="k_${t}" value="${esc(c.carpetas[t])}" style="flex:1 1 260px"><button class="btn ghost" type="button" data-pick>Examinar…</button></div></div>`).join("")}
+    <div class="field"><label for="k_d">Días de aviso antes del vencimiento</label><input type="number" id="k_d" min="1" max="365" value="${c.diasAviso}"></div>
+    <div class="field full"><label for="k_g">Enlace público de la carpeta de documentos (Drive)</label><input id="k_g" value="${esc(c.drive)}"><span class="hint">Es el enlace que abre el botón “Ver documento” del sitio de consulta.</span></div>
+    <div class="field full actions"><button class="btn" type="submit">Guardar configuración</button></div></form></div>
+  <div class="panel"><h2>Datos de ejemplo</h2><p class="sub" style="margin:0 0 10px">Los cambios de este boceto se guardan solo en este equipo. Puedes volver a los 90 convenios originales.</p><button class="btn danger" id="rs">Restaurar datos de ejemplo</button></div></div>`;
+  document.querySelectorAll("[data-pick]").forEach(b=>b.onclick=()=>toast("En la aplicación final se abre el selector de carpetas de Windows"));
+  $("#cf").onsubmit=e=>{e.preventDefault();TIPOS.forEach(t=>c.carpetas[t]=$("#k_"+t).value.trim());c.diasAviso=Math.max(1,+$("#k_d").value||90);c.drive=$("#k_g").value.trim();save();toast("Configuración guardada")};
+  let sure=false;$("#rs").onclick=function(){if(!sure){sure=true;this.textContent="Confirmar: se perderán los cambios";return}
+    S={items:clone(window.CONVENIOS_EJEMPLO),cfg:clone(CFG0)};save();toast("Datos restaurados");go()};
+}
+go();
+</script>
+
+</body></html>
