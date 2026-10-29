@@ -1,41 +1,40 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Gestión de Convenios</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* Layout: aplicación de escritorio con barra lateral fija a la izquierda y área de trabajo a la derecha; en pantallas angostas la barra pasa arriba */
 :root{
-  --bg:#EEF1EF; --surface:#FFFFFF; --ink:#16211F; --muted:#586561; --line:#D9DFDC;
-  --side:#14211F; --side-ink:#C9D6D2; --side-act:#1F3A34;
-  --accent:#0B6E5B; --accent-ink:#FFFFFF; --accent-soft:#E1F1EC;
-  --ok:#1D7544; --ok-soft:#E0F2E7; --warn:#9A5B00; --warn-soft:#FBEBCF; --bad:#A8271E; --bad-soft:#F8DEDA;
-  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
-  --f-body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
-  --f-mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+  --bg:#F5F4F3; --surface:#FFFFFF; --ink:#231F20; --muted:#6F6F6E; --line:#E0DDDB;
+  --accent:#A21A19; --accent-ink:#FFFFFF; --accent-soft:#F8E6E5; --bar:#A21A19; --bar-ink:#FFFFFF;
+  --ok:#2E7D4F; --ok-soft:#E3F1E8; --warn:#B8480A; --warn-soft:#FDE9D9; --bad:#C10230; --bad-soft:#FBE3E8;
+  --side:#262524; --side-ink:#CFCCCA; --side-act:#3A3836; --side-mark:#FF8300;
+  --f-display:'Helvetica Now Text','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --f-body:'Helvetica Now Text','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --f-mono:'Helvetica Now Text','Helvetica Neue',Helvetica,Arial,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0E1413; --surface:#162120; --ink:#E5ECE9; --muted:#97A5A0; --line:#293734;
-  --side:#0A0F0E; --side-ink:#A9B9B4; --side-act:#18302A;
-  --accent:#43C9AA; --accent-ink:#06211B; --accent-soft:#17352E;
-  --ok:#5FD08C; --ok-soft:#173526; --warn:#F0B35A; --warn-soft:#3A2B10; --bad:#F2928A; --bad-soft:#3E1B18; color-scheme:dark}}
+  --bg:#161515; --surface:#201F1F; --ink:#EDEBEA; --muted:#A8A5A3; --line:#383635;
+  --accent:#FF8300; --accent-ink:#1F1000; --accent-soft:#3A2410; --bar:#7E1413; --bar-ink:#FFFFFF;
+  --ok:#6CCB8F; --ok-soft:#183223; --warn:#FFA24D; --warn-soft:#3B2711; --bad:#FF7A92; --bad-soft:#40181F;
+  --side:#121111; --side-ink:#B9B6B4; --side-act:#2A2827; --side-mark:#FF8300;
+  color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0E1413; --surface:#162120; --ink:#E5ECE9; --muted:#97A5A0; --line:#293734;
-  --side:#0A0F0E; --side-ink:#A9B9B4; --side-act:#18302A;
-  --accent:#43C9AA; --accent-ink:#06211B; --accent-soft:#17352E;
-  --ok:#5FD08C; --ok-soft:#173526; --warn:#F0B35A; --warn-soft:#3A2B10; --bad:#F2928A; --bad-soft:#3E1B18; color-scheme:dark}
+  --bg:#161515; --surface:#201F1F; --ink:#EDEBEA; --muted:#A8A5A3; --line:#383635;
+  --accent:#FF8300; --accent-ink:#1F1000; --accent-soft:#3A2410; --bar:#7E1413; --bar-ink:#FFFFFF;
+  --ok:#6CCB8F; --ok-soft:#183223; --warn:#FFA24D; --warn-soft:#3B2711; --bad:#FF7A92; --bad-soft:#40181F;
+  --side:#121111; --side-ink:#B9B6B4; --side-act:#2A2827; --side-mark:#FF8300;
+  color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font:400 14px/1.5 var(--f-body)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 .banner{background:var(--warn-soft);color:var(--warn);font-size:12px;padding:6px 16px;text-align:center}
-.app{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:calc(100vh - 28px)}
-nav.side{background:var(--side);color:var(--side-ink);padding:20px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;align-self:start;height:calc(100vh - 28px);overflow:auto}
+.app{display:grid;grid-template-columns:230px minmax(0,1fr);min-height:calc(100vh - 68px)}
+nav.side{background:var(--side);color:var(--side-ink);padding:20px 12px;display:flex;flex-direction:column;gap:4px;position:sticky;top:0;align-self:start;height:calc(100vh - 68px);overflow:auto}
 .brand{font:700 18px/1.1 var(--f-display);color:#fff;padding:4px 10px 18px}
 .brand small{display:block;font:500 11px var(--f-mono);color:var(--side-ink);letter-spacing:.06em;margin-top:6px;text-transform:uppercase}
 nav.side a{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--side-ink);text-decoration:none;padding:9px 10px;border-radius:6px;font-weight:500}
 nav.side a:hover{background:var(--side-act);color:#fff}
-nav.side a[aria-current="page"]{background:var(--side-act);color:#fff;box-shadow:inset 3px 0 0 var(--accent)}
+nav.side a[aria-current="page"]{background:var(--side-act);color:#fff;box-shadow:inset 3px 0 0 var(--side-mark)}
 nav.side .badge{font:500 11px var(--f-mono);background:var(--bad);color:#fff;border-radius:99px;padding:1px 8px}
 .side .foot{margin-top:auto;font-size:12px;padding:10px;color:var(--side-ink);opacity:.8}
 main{padding:24px clamp(16px,3vw,36px) 56px;min-width:0}
@@ -107,8 +106,15 @@ dl.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0}dl.kv dt
   .brand{width:100%;padding:2px 8px 6px}.side .foot{display:none}
   nav.side a[aria-current="page"]{box-shadow:none}
 }
+
+.switch{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:40px;background:var(--bar);color:var(--bar-ink);padding:6px 16px;font:600 13px var(--f-body)}
+.switch .sw-t{margin-right:auto;font:600 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+.switch a{color:var(--bar-ink);text-decoration:none;padding:5px 14px;border-radius:99px}
+.switch a:hover{background:rgba(255,255,255,.2)}
+.switch a[aria-current="page"]{background:var(--bar-ink);color:var(--bar)}
 </style>
 
+<nav class="switch" aria-label="Cambiar de vista"><span class="sw-t">Sistema de Convenios</span><a href="index.html">Consulta pública</a><a href="gestion.html" aria-current="page">Gestión</a></nav>
 <div class="banner">Rama Git Producion</div>
 <div class="app">
   <nav class="side" id="side" aria-label="Secciones">

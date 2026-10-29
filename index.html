@@ -1,27 +1,26 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Consulta de Convenios</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 /* Layout: encabezado sobrio + barra de búsqueda fija + lista tipo registro (tabla en escritorio, fichas en móvil) */
 :root{
-  --bg:#F4F6F4; --surface:#FFFFFF; --ink:#16211F; --muted:#586561; --line:#DCE2DF;
-  --accent:#0B6E5B; --accent-ink:#FFFFFF; --accent-soft:#E1F1EC;
-  --ok:#1D7544; --ok-soft:#E0F2E7; --warn:#9A5B00; --warn-soft:#FBEBCF; --bad:#A8271E; --bad-soft:#F8DEDA;
-  --f-display:'Bricolage Grotesque','Segoe UI',system-ui,sans-serif;
-  --f-body:'IBM Plex Sans','Segoe UI',system-ui,sans-serif;
-  --f-mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+  --bg:#F5F4F3; --surface:#FFFFFF; --ink:#231F20; --muted:#6F6F6E; --line:#E0DDDB;
+  --accent:#A21A19; --accent-ink:#FFFFFF; --accent-soft:#F8E6E5; --bar:#A21A19; --bar-ink:#FFFFFF;
+  --ok:#2E7D4F; --ok-soft:#E3F1E8; --warn:#B8480A; --warn-soft:#FDE9D9; --bad:#C10230; --bad-soft:#FBE3E8;
+  --f-display:'Helvetica Now Text','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --f-body:'Helvetica Now Text','Helvetica Neue',Helvetica,Arial,sans-serif;
+  --f-mono:'Helvetica Now Text','Helvetica Neue',Helvetica,Arial,sans-serif;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0F1514; --surface:#162120; --ink:#E5ECE9; --muted:#97A5A0; --line:#2A3835;
-  --accent:#43C9AA; --accent-ink:#06211B; --accent-soft:#17352E;
-  --ok:#5FD08C; --ok-soft:#173526; --warn:#F0B35A; --warn-soft:#3A2B10; --bad:#F2928A; --bad-soft:#3E1B18; color-scheme:dark}}
+  --bg:#161515; --surface:#201F1F; --ink:#EDEBEA; --muted:#A8A5A3; --line:#383635;
+  --accent:#FF8300; --accent-ink:#1F1000; --accent-soft:#3A2410; --bar:#7E1413; --bar-ink:#FFFFFF;
+  --ok:#6CCB8F; --ok-soft:#183223; --warn:#FFA24D; --warn-soft:#3B2711; --bad:#FF7A92; --bad-soft:#40181F;
+  color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0F1514; --surface:#162120; --ink:#E5ECE9; --muted:#97A5A0; --line:#2A3835;
-  --accent:#43C9AA; --accent-ink:#06211B; --accent-soft:#17352E;
-  --ok:#5FD08C; --ok-soft:#173526; --warn:#F0B35A; --warn-soft:#3A2B10; --bad:#F2928A; --bad-soft:#3E1B18; color-scheme:dark}
+  --bg:#161515; --surface:#201F1F; --ink:#EDEBEA; --muted:#A8A5A3; --line:#383635;
+  --accent:#FF8300; --accent-ink:#1F1000; --accent-soft:#3A2410; --bar:#7E1413; --bar-ink:#FFFFFF;
+  --ok:#6CCB8F; --ok-soft:#183223; --warn:#FFA24D; --warn-soft:#3B2711; --bad:#FF7A92; --bad-soft:#40181F;
+  color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--f-body);
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
@@ -29,7 +28,8 @@ body{background:var(--bg);color:var(--ink);font:400 15px/1.5 var(--f-body);
 a{color:var(--accent)}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 .sample{background:var(--warn-soft);color:var(--warn);font-size:13px;padding:8px 12px;margin:0 -16px;text-align:center}
-header.top{padding-block:36px 20px;display:grid;gap:8px}
+header.top{padding-block:36px 20px;display:grid;gap:8px;position:relative}
+.garza{position:absolute;right:0;top:28px;height:56px;width:auto}
 .kicker{font:500 12px var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 h1{font:700 clamp(28px,5vw,44px)/1.05 var(--f-display);margin:0;letter-spacing:-.02em;text-wrap:balance}
 .lede{color:var(--muted);max-width:62ch;margin:0}
@@ -79,11 +79,20 @@ dt{color:var(--muted)}dd{margin:0;overflow-wrap:anywhere}
 .note{background:var(--bg);border-radius:6px;padding:12px;font-size:13px;color:var(--muted)}
 .dlg .actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 footer{margin-top:40px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:13px;display:grid;gap:6px}
+
+.switch{display:flex;align-items:center;gap:6px;flex-wrap:wrap;min-height:40px;background:var(--bar);color:var(--bar-ink);padding:6px 16px;font:600 13px var(--f-body)}
+.switch .sw-t{margin-right:auto;font:600 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase;opacity:.9}
+.switch a{color:var(--bar-ink);text-decoration:none;padding:5px 14px;border-radius:99px}
+.switch a:hover{background:rgba(255,255,255,.2)}
+.switch a[aria-current="page"]{background:var(--bar-ink);color:var(--bar)}
+.switch{margin:0 -16px}
 </style>
 
+<nav class="switch" aria-label="Cambiar de vista"><span class="sw-t">Sistema de Convenios</span><a href="index.html" aria-current="page">Consulta pública</a><a href="gestion.html">Gestión</a></nav>
 <div class="sample">Rama Git Producion</div>
 <div class="wrap">
   <header class="top">
+    <img class="garza" src="img/garza.svg" alt="" onerror="this.remove()">
     <div class="kicker">Vinculación institucional · Consulta pública</div>
     <h1>Convenios institucionales vigentes</h1>
     <p class="lede">Busca un convenio por folio, institución u objeto y abre su documento en el repositorio. Aquí se muestran los convenios activos; los vencidos se pueden incluir con el filtro.</p>
